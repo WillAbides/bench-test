@@ -45,3 +45,18 @@ func Benchmark_sleeper_sleep(b *testing.B) {
 		sl.sleep()
 	}
 }
+
+func Benchmark_sleeper_sleep_doubled(b *testing.B) {
+	sleepTime, err := getSleepTime("sleeptime.txt")
+	if err != nil {
+		b.Fatal(err)
+	}
+	sl := &sleeper{
+		sleepTime: sleepTime * 2,
+	}
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		sl.sleep()
+	}
+}
