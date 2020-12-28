@@ -19,7 +19,7 @@ runs:
     - name: linux only
       shell: bash
       run: |
-        if [ "${{ runner.os }}" != "Linux" ]; then
+        if [ "${{ runner.os }}" != "FOO" ]; then
           echo This action only runs on Linux
           exit 1
         fi
