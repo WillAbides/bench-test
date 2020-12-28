@@ -19,7 +19,7 @@ runs:
     - name: linux only
       shell: bash
       run: |
-        if [ "${{ runner.os }}" != "FOO" ]; then
+        if [ "${{ runner.os }}" != "Linux" ]; then
           echo This action only runs on Linux
           exit 1
         fi
@@ -32,6 +32,7 @@ runs:
         if [ "$benchdiff_dir" = "runner.temp" ]; then
           benchdiff_dir="${{ runner.temp }}/benchdiff"
         fi
+        echo "benchdiff_dir=\"$benchdiff_dir\""
         echo "benchdiff_dir=\"$benchdiff_dir\"" >> $GITHUB_ENV
         if [ "$add_to_path" = "true" ]; then
           echo "$benchdiff_dir" >> $GITHUB_PATH
@@ -40,6 +41,7 @@ runs:
       shell: bash
       run: |
         set -e
+        echo "benchdiff_dir=\"$benchdiff_dir\""
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
         tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
