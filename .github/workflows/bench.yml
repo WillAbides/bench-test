@@ -21,4 +21,6 @@ jobs:
           url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
           curl -OL $url
           tar -xzf $tarfile
-          ./benchdiff --help
+          echo "benchdiff_dir=\"$benchdiff_dir\"" >> $GITHUB_ENV
+          echo "$benchdiff_dir" >> $GITHUB_PATH
+      - run: benchdiff --help
