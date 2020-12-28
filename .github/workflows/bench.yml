@@ -18,4 +18,4 @@ jobs:
       - uses: ./.github/actions/benchdiff
         with:
           benchdiff_version: 0.1.1
-      - run: benchdiff --base-ref=origin/master
+      - run: benchdiff --base-ref=origin/master --bench-count 1
