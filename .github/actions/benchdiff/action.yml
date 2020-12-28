@@ -9,10 +9,6 @@ inputs:
     description: Where benchdiff will be installed
     default: runner.temp
     required: false
-  add_to_path:
-    description: Whether to prepend PATH with benchdiff_dir
-    default: "true"
-    required: false
   install_only:
     description: Whether to stop after installing. Any value other than "false" is interpreted as true.
     default: "false"
@@ -44,41 +40,45 @@ inputs:
             --split="pkg,goos,goarch"    split benchmarks by labels
     default: "--base-ref=$default_base_ref"
     required: false
+outputs:
+  benchdiff_bin:
+    description: path to the benchdiff executable
+    value: ${{ steps.set-env.outputs.benchdiff_bin }}
 runs:
   using: composite
   steps:
-    - name: linux only
+    - id: linux-only
       shell: bash
       run: |
         if [ "${{ runner.os }}" != "Linux" ]; then
           echo This action only runs on Linux
           exit 1
         fi
-    - name: set env
+    - id: set-env
       shell: bash
       run: |
         set -e
-        echo "benchdiff_version=$benchdiff_version" >> $GITHUB_ENV
         benchdiff_dir="${{ inputs.benchdiff_dir }}"
         if [ "$benchdiff_dir" = "runner.temp" ]; then
           benchdiff_dir="${{ runner.temp }}/benchdiff"
         fi
-        echo "benchdiff_dir=$benchdiff_dir" >> $GITHUB_ENV
         mkdir -p "$benchdiff_dir"
-        if [ "${{ inputs.add_to_path }}" = "true" ]; then
-          echo "$benchdiff_dir" >> $GITHUB_PATH
-        fi
-    - name: install benchdiff
+        echo "::set-output name=benchdiff_dir::$benchdiff_dir"
+        echo "::set-output name=benchdiff_bin::$benchdiff_dir/benchdiff"
+    - id: install-benchdiff
       shell: bash
       run: |
         set -e
+        benchdiff_dir="${{ steps.set-env-output.benchdff-dir }}"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
+        benchdiff_version="${{ inputs.benchdiff_version }}"
         tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
         url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
-        curl --silent -OL $url
-        tar -xzf $tarfile
-    - name: run
+        curl --silent -OL "$url"
+        tar -xzf "$tarfile" benchdiff
+        rm "$tarfile"
+    - id: run-benchdiff
       shell: bash
       run: |
         set -e
@@ -91,4 +91,5 @@ runs:
           default_branch="$(git remote show $remote | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
           benchdiff_args="$(sed "s|\$default_base_ref|$remote/$default_branch|g" <<< "$benchdiff_args")"
         fi
-        xargs "$benchdiff_dir/benchdiff" <<< "$benchdiff_args"
+        cmd="${{ steps.set-env.outputs.benchdiff_bin }}"
+        xargs "$cmd" <<< "$benchdiff_args"

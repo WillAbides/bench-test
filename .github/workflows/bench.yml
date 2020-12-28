@@ -16,5 +16,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/benchdiff
+        id: benchdiff
         with:
           benchdiff_version: 0.1.1
+          benchdiff_args: --base-ref=$default_base_ref --bench-count=1
+      - run: echo "benchdiff_bin ${{ steps.benchdiff.outputs.benchdiff_bin }}"
