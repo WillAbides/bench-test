@@ -44,6 +44,9 @@ outputs:
   benchdiff_bin:
     description: path to the benchdiff executable
     value: ${{ steps.install.outputs.benchdiff_bin }}
+  output:
+    description: output from benchdiff
+    value: ${{ steps.install.outputs.output }}
 runs:
   using: composite
   steps:
@@ -82,4 +85,9 @@ runs:
           benchdiff_args="$(sed "s|\$default_base_ref|$remote/$default_branch|g" <<< "$benchdiff_args")"
         fi
         cmd="${{ steps.install.outputs.benchdiff_bin }}"
-        xargs "$cmd" <<< "$benchdiff_args"
+        output="$(xargs "$cmd" <<< "$benchdiff_args")"
+        echo "$output"
+        output="${output//'%'/'%25'}"
+        output="${output//$'\n'/'%0A'}"
+        output="${output//$'\r'/'%0D'}"
+        echo "::set-output name=output::$output"
