@@ -46,7 +46,7 @@ outputs:
     value: ${{ steps.install.outputs.benchdiff_bin }}
   output:
     description: output from benchdiff
-    value: ${{ steps.install.outputs.output }}
+    value: ${{ steps.run-benchdiff.outputs.output }}
 runs:
   using: composite
   steps:
@@ -90,4 +90,5 @@ runs:
         output="${output//'%'/'%25'}"
         output="${output//$'\n'/'%0A'}"
         output="${output//$'\r'/'%0D'}"
+        echo "more output: $output"
         echo "::set-output name=output::$output"
