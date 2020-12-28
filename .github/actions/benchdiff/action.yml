@@ -32,19 +32,15 @@ runs:
         if [ "$benchdiff_dir" = "runner.temp" ]; then
           benchdiff_dir="${{ runner.temp }}/benchdiff"
         fi
-        echo "benchdiff_dir=$benchdiff_dir"
         echo "benchdiff_dir=$benchdiff_dir" >> $GITHUB_ENV
         mkdir -p "$benchdiff_dir"
         if [ "${{ inputs.add_to_path }}" = "true" ]; then
           echo "$benchdiff_dir" >> $GITHUB_PATH
         fi
-        echo "path1 $PATH"
     - name: install benchdiff
       shell: bash
       run: |
         set -e
-        echo "path2 $PATH"
-        echo "benchdiff_dir=$benchdiff_dir"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
         tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
