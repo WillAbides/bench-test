@@ -41,6 +41,7 @@ runs:
       shell: bash
       run: |
         set -e
+        echo "path $PATH"
         echo "benchdiff_dir=$benchdiff_dir"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
