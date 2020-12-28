@@ -15,6 +15,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: .github/actions/benchdiff
+      - uses: ./.github/actions/benchdiff
         with:
           benchdiff_version: 0.1.1
