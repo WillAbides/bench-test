@@ -1,0 +1,23 @@
+name: bench
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  bench:
+    runs-on: ubuntu-20.04
+    env:
+      benchdiff_dir: "${{ runner.temp }}/benchdiff"
+      benchdiff_version: "0.1.1"
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - run: |
+          cd $benchdiff_dir
+          tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
+          url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
+          curl -OL $url
+          tar -xzf $tarfile
+          ./benchdiff --help
