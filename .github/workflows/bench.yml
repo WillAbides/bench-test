@@ -21,4 +21,4 @@ jobs:
           benchdiff_version: 0.1.1
           benchdiff_args: --base-ref=$default_base_ref --bench-count=1
       - name: output
-        run: echo "${{ steps.benchdiff.outputs.output }}"
+        run: echo "${{ steps.benchdiff.outputs.benchdiff_out }}"
