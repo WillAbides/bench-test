@@ -86,7 +86,7 @@ runs:
         fi
         benchdiff_args='${{ inputs.benchdiff_args }}'
         if [[ "$benchdiff_args" == *'$default_base_ref'* ]]; then
-          default_branch="$(git remote show origin | grep "HEAD branch" | cut -d ":" -f 2)"
+          default_branch="$(git remote show origin | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
           benchdiff_args="$(sed "s|\$default_base_ref|origin/$default_branch|g" <<< "$benchdiff_args")"
         fi
         echo "$benchdiff_args"
