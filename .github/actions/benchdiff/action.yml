@@ -69,7 +69,7 @@ runs:
       shell: bash
       run: |
         set -e
-        benchdiff_dir="${{ steps.set-env.outputs.benchdff_dir }}"
+        benchdiff_dir="${{ steps.set-env.outputs.benchdiff_dir }}"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
         benchdiff_version="${{ inputs.benchdiff_version }}"
