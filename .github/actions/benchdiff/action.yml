@@ -27,13 +27,13 @@ runs:
       shell: bash
       run: |
         set -e
-        echo "benchdiff_version=\"$benchdiff_version\"" >> $GITHUB_ENV
+        echo "benchdiff_version=$benchdiff_version" >> $GITHUB_ENV
         benchdiff_dir="${{ inputs.benchdiff_dir }}"
         if [ "$benchdiff_dir" = "runner.temp" ]; then
           benchdiff_dir="${{ runner.temp }}/benchdiff"
         fi
-        echo "benchdiff_dir=\"$benchdiff_dir\""
-        echo "benchdiff_dir=\"$benchdiff_dir\"" >> $GITHUB_ENV
+        echo "benchdiff_dir=$benchdiff_dir"
+        echo "benchdiff_dir=$benchdiff_dir" >> $GITHUB_ENV
         if [ "$add_to_path" = "true" ]; then
           echo "$benchdiff_dir" >> $GITHUB_PATH
         fi
@@ -41,7 +41,7 @@ runs:
       shell: bash
       run: |
         set -e
-        echo "benchdiff_dir=\"$benchdiff_dir\""
+        echo "benchdiff_dir=$benchdiff_dir"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
         tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
