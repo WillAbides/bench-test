@@ -34,6 +34,7 @@ runs:
         fi
         echo "benchdiff_dir=$benchdiff_dir"
         echo "benchdiff_dir=$benchdiff_dir" >> $GITHUB_ENV
+        mkdir -p "$benchdiff_dir"
         if [ "$add_to_path" = "true" ]; then
           echo "$benchdiff_dir" >> $GITHUB_PATH
         fi
