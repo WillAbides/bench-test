@@ -2,19 +2,10 @@ name: bench
 
 on:
   push:
-  workflow_dispatch:
 
 jobs:
   bench:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-20.04
-            os_type: linux
-          - os: macos-latest
-            os_type: darwin
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-20.04
     env:
       benchdiff_version: "0.1.1"
     defaults:
@@ -25,10 +16,13 @@ jobs:
           benchdiff_dir="${{ runner.temp }}/benchdiff"
           mkdir -p "$benchdiff_dir"
           cd $benchdiff_dir
-          tarfile="benchdiff_${benchdiff_version}_${{matrix.os_type}}_amd64.tar.gz"
+          tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
           url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
           curl -OL $url
           tar -xzf $tarfile
           echo "benchdiff_dir=\"$benchdiff_dir\"" >> $GITHUB_ENV
           echo "$benchdiff_dir" >> $GITHUB_PATH
-      - run: benchdiff --help
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: benchdiff --base-ref=master
