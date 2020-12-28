@@ -80,7 +80,7 @@ runs:
     - name: run
       shell: bash
       run: |
-        set -eb
+        set -e
         if [ "${{ inputs.install_only }}" != "false" ]; then
           exit 0
         fi
