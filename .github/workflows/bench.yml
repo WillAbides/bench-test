@@ -9,8 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macos-latest]
-        includes:
+        include:
           - os: ubuntu-20.04
             os_type: linux
           - os: macos-latest
