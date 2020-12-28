@@ -7,7 +7,7 @@ inputs:
     required: false
   benchdiff_dir:
     description: Where benchdiff will be installed
-    default: runner.temp
+    default: ${{ runner.temp }}/benchdiff
     required: false
   install_only:
     description: Whether to stop after installing. Any value other than "false" is interpreted as true.
