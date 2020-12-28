@@ -34,5 +34,5 @@ runs:
         fi
         tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
         url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
-        curl -OL $url
+        curl --silent -OL $url
         tar -xzf $tarfile
