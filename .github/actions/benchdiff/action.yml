@@ -37,11 +37,12 @@ runs:
         if [ "$add_to_path" = "true" ]; then
           echo "$benchdiff_dir" >> $GITHUB_PATH
         fi
+        echo "path1 $PATH"
     - name: install benchdiff
       shell: bash
       run: |
         set -e
-        echo "path $PATH"
+        echo "path2 $PATH"
         echo "benchdiff_dir=$benchdiff_dir"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
