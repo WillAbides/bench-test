@@ -13,6 +13,10 @@ inputs:
     description: Whether to prepend PATH with benchdiff_dir
     default: "true"
     required: false
+  install_only:
+    description: Whether to stop after installing. Any value other than "false" is interpreted as true.
+    default: "false"
+    required: false
 runs:
   using: composite
   steps:
@@ -47,3 +51,11 @@ runs:
         url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
         curl --silent -OL $url
         tar -xzf $tarfile
+    - name: run
+      shell: bash
+      run: |
+        set -e
+        if [ "${{ inputs.install_only }}" != "false" ]; then
+          exit 0
+        fi
+        git remote show origin | grep "HEAD branch" | cut -d ":" -f 2
