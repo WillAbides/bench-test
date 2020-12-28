@@ -20,6 +20,7 @@ inputs:
   benchdiff_args:
     description: |
       Arguments for the benchdiff command.
+      All instances of $default_base_ref will be replaced with this repo's default branch.
 
       Flags:
         -h, --help                       Show context-sensitive help.
@@ -90,4 +91,4 @@ runs:
           default_branch="$(git remote show $remote | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
           benchdiff_args="$(sed "s|\$default_base_ref|$remote/$default_branch|g" <<< "$benchdiff_args")"
         fi
-        echo "$benchdiff_args"
+        xargs "$benchdiff_dir/benchdiff" <<< "$benchdiff_args"
