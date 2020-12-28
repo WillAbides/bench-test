@@ -1,0 +1,38 @@
+name: benchdiff
+description: use benchdiff
+inputs:
+  benchdiff_version:
+    description: Version of benchdiff to use (exclude "v" from the front of the release name)
+    default: 0.1.1
+    required: false
+  benchdiff_dir:
+    description: Where benchdiff will be installed
+    default: runner.temp
+    required: false
+  add_to_path:
+    description: Whether to prepend PATH with benchdiff_dir
+    default: "true"
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: install benchdiff
+      shell: bash
+      env:
+        benchdiff_version: ${{ inputs.benchdiff_version }}
+        benchdiff_dir: ${{ inputs.benchdiff_dir }}
+        add_to_path: ${{ inputs.add_to_path }}
+      run: |
+        if [ "$benchdiff_dir" = "runner.temp" ]; then
+          benchdiff_dir="${{ runner.temp }}/benchdiff"
+        fi
+        mkdir -p "$benchdiff_dir"
+        cd "$benchdiff_dir"
+        echo "benchdiff_dir=\"$benchdiff_dir\"" >> $GITHUB_ENV
+        if [ "$add_to_path" = "true" ]; then
+          echo "$benchdiff_dir" >> $GITHUB_PATH
+        fi
+        tarfile="benchdiff_${benchdiff_version}_linux_amd64.tar.gz"
+        url="https://github.com/WillAbides/benchdiff/releases/download/v${benchdiff_version}/${tarfile}"
+        curl -OL $url
+        tar -xzf $tarfile
