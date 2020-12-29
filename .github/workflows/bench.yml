@@ -22,3 +22,6 @@ jobs:
           benchdiff_args: --base-ref=$default_base_ref --bench-count=1
       - name: output
         run: echo "${{ steps.benchdiff.outputs.benchdiff_out }}"
+      - name: foo
+        run: |
+          echo "::error ::here is a message"
