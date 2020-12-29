@@ -17,10 +17,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |
-          status_name="statuscheck"
+          status_name="statuscheck-result"
           commit_sha="$(git rev-parse HEAD)"
           posttmpl='{"conclusion":"%s","head_sha":"%s","name":"%s","output":{"summary":"##Summary\\n\\nSummary of the output\\n\\nhi","text":"some summary text","title":"my output"}}'
-          postdata="$(printf "$posttmpl" "success" "$commit_sha" "$status_name")"
+          postdata="$(printf "$posttmpl" "neutral" "$commit_sha" "$status_name")"
           curl -X 'POST' -d "$postdata" \
           -H 'Accept: application/vnd.github.v3+json, application/vnd.github.antiope-preview+json' \
           -H 'Content-Type: application/json' \
