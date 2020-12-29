@@ -19,6 +19,6 @@ jobs:
         id: benchdiff
         with:
           benchdiff_version: 0.2.0
-          benchdiff_args: --base-ref=$default_base_ref --bench-count=1 --degradation-exit 3
+          benchdiff_args: --base-ref=$default_base_ref --degradation-exit 3
       - name: output
         run: echo "${{ steps.benchdiff.outputs.benchdiff_out }}"
