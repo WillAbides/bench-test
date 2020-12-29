@@ -19,11 +19,11 @@ jobs:
         run: |
           status_name="foo"
           commit_sha="$(git rev-parse HEAD)"
-          postdata="$(printf '{"head_sha":"%s","name":"%s"}' "$commit_sha" "$status_name")"
+          posttmpl='{"conclusion":"%s","head_sha":"%s","name":"%s","output":{"summary":"##Summary\n\nSummary of the output\n\nhi","text":"some summary text","title":"my output"}}'
+          postdata="$(printf "$posttmpl" "success" "$commit_sha" "$status_name")"
           curl -X 'POST' -d "$postdata" \
           -H 'Accept: application/vnd.github.v3+json, application/vnd.github.antiope-preview+json' \
           -H 'Content-Type: application/json' \
-          -H 'User-Agent: octo-cli/0.23.0' \
           -H "Authorization: token $GITHUB_TOKEN" \
           'https://api.github.com/repos/WillAbides/bench-test/check-runs'
   bench:
