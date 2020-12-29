@@ -19,7 +19,7 @@ jobs:
         run: |
           status_name="foo"
           commit_sha="$(git rev-parse HEAD)"
-          posttmpl='{"conclusion":"%s","head_sha":"%s","name":"%s","output":{"summary":"##Summary\n\nSummary of the output\n\nhi","text":"some summary text","title":"my output"}}'
+          posttmpl='{"conclusion":"%s","head_sha":"%s","name":"%s","output":{"summary":"##Summary\\n\\nSummary of the output\\n\\nhi","text":"some summary text","title":"my output"}}'
           postdata="$(printf "$posttmpl" "success" "$commit_sha" "$status_name")"
           curl -X 'POST' -d "$postdata" \
           -H 'Accept: application/vnd.github.v3+json, application/vnd.github.antiope-preview+json' \
