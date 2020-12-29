@@ -17,7 +17,7 @@ jobs:
         id: benchdiff
         with:
           benchdiff_version: 0.2.0
-          benchdiff_args: --base-ref=$default_base_ref --bench-count=1 --degradation-exit 3
+          benchdiff_args: --base-ref=$default_base_ref --bench-count=1 --degradation-exit 3 --html
       - name: output
         run: echo "${{ steps.benchdiff.outputs.benchdiff_out }}"
       - name: report status
@@ -26,9 +26,7 @@ jobs:
         run: |
 
           output_summary="
-          \`\`\`
           ${{ steps.benchdiff.outputs.benchdiff_out }}
-          \`\`\`
           "
 
           conclusion="success"
