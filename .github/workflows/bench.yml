@@ -39,9 +39,9 @@ jobs:
           '
 
           formatted_output="
-          ```
+          \`\`\`
           ${{ steps.benchdiff.outputs.benchdiff_out }}
-          ```
+          \`\`\`
           "
 
           echo formatted_output "$formatted_output"
