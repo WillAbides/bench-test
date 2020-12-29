@@ -27,7 +27,6 @@ jobs:
           -H "Authorization: token $GITHUB_TOKEN" \
           'https://api.github.com/repos/WillAbides/bench-test/check-runs'
   bench:
-    if: ${{ false }}
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -43,3 +42,42 @@ jobs:
           benchdiff_args: --base-ref=$default_base_ref --bench-count=1 --degradation-exit 3
       - name: output
         run: echo "${{ steps.benchdiff.outputs.benchdiff_out }}"
+      - name: report status
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        run: |
+          posttmpl='
+            {
+              "conclusion": $conclusion,
+              "head_sha": $head_sha,
+              "name": $name,
+              "output": {
+                "summary": $output_summary,
+                "text": $output_text,
+                "title": $output_title
+              }
+            }
+          '
+
+          conclusion="success"
+          head_sha="$(git rev-parse HEAD)"
+          name="bench result"
+          output_summary=""
+          output_text="${{ steps.benchdiff.outputs.benchdiff_out }}"
+          output_title="bench result"
+
+          postdata="$(jq -n \
+          --arg conclusion "$conclusion" \
+          --arg head_sha "$head_sha" \
+          --arg name "$name" \
+          --arg output_summary "$output_summary" \
+          --arg output_text "$output_text" \
+          --arg output_title "$output_title" \
+          "$posttmpl"
+          )"
+
+          curl -X 'POST' -d "$postdata" \
+          -H 'Accept: application/vnd.github.v3+json, application/vnd.github.antiope-preview+json' \
+          -H 'Content-Type: application/json' \
+          -H "Authorization: token $GITHUB_TOKEN" \
+          'https://api.github.com/repos/WillAbides/bench-test/check-runs'
