@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  status:
+  statuscheck:
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -17,7 +17,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |
-          status_name="foo"
+          status_name="statuscheck"
           commit_sha="$(git rev-parse HEAD)"
           posttmpl='{"conclusion":"%s","head_sha":"%s","name":"%s","output":{"summary":"##Summary\\n\\nSummary of the output\\n\\nhi","text":"some summary text","title":"my output"}}'
           postdata="$(printf "$posttmpl" "success" "$commit_sha" "$status_name")"
@@ -27,6 +27,7 @@ jobs:
           -H "Authorization: token $GITHUB_TOKEN" \
           'https://api.github.com/repos/WillAbides/bench-test/check-runs'
   bench:
+    if: ${{ false }}
     runs-on: ubuntu-20.04
     defaults:
       run:
