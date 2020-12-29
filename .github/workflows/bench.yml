@@ -24,43 +24,35 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |
-          set -x
-          posttmpl='
-            {
-              "conclusion": $conclusion,
-              "head_sha": $head_sha,
-              "name": $name,
-              "output": {
-                "summary": $output_summary,
-                "text": $output_text,
-                "title": $output_title
-              }
-            }
-          '
 
-          formatted_output="
+          output_summary="
           \`\`\`
           ${{ steps.benchdiff.outputs.benchdiff_out }}
           \`\`\`
           "
 
-          echo formatted_output "$formatted_output"
-
           conclusion="success"
           head_sha="$(git rev-parse HEAD)"
           name="bench result"
-          output_summary="$formatted_output"
-          output_text="$formatted_output"
-          output_title="bench result"
+          output_title="benchdiff result"
 
           postdata="$(jq -n \
           --arg conclusion "$conclusion" \
           --arg head_sha "$head_sha" \
           --arg name "$name" \
           --arg output_summary "$output_summary" \
-          --arg output_text "$output_text" \
           --arg output_title "$output_title" \
-          "$posttmpl"
+          '
+            {
+              "conclusion": $conclusion,
+              "head_sha": $head_sha,
+              "name": $name,
+              "output": {
+                "summary": $output_summary,
+                "title": $output_title
+              }
+            }
+          '
           )"
 
           curl -X 'POST' -d "$postdata" \
