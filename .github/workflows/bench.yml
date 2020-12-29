@@ -4,28 +4,6 @@ on:
   push:
 
 jobs:
-  statuscheck:
-    runs-on: ubuntu-20.04
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: status
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        run: |
-          status_name="statuscheck-result"
-          commit_sha="$(git rev-parse HEAD)"
-          posttmpl='{"conclusion":"%s","head_sha":"%s","name":"%s","output":{"summary":"","text":"some summary text","title":"my output"}}'
-          postdata="$(printf "$posttmpl" "neutral" "$commit_sha" "$status_name")"
-          curl -X 'POST' -d "$postdata" \
-          -H 'Accept: application/vnd.github.v3+json, application/vnd.github.antiope-preview+json' \
-          -H 'Content-Type: application/json' \
-          -H "Authorization: token $GITHUB_TOKEN" \
-          'https://api.github.com/repos/WillAbides/bench-test/check-runs'
   bench:
     runs-on: ubuntu-20.04
     defaults:
@@ -59,11 +37,19 @@ jobs:
             }
           '
 
+          formatted_output="
+          ```
+          "${{ steps.benchdiff.outputs.benchdiff_out }}"
+          ```
+          "
+
+          echo formatted_output "$formatted_output"
+
           conclusion="success"
           head_sha="$(git rev-parse HEAD)"
           name="bench result"
-          output_summary=""
-          output_text="${{ steps.benchdiff.outputs.benchdiff_out }}"
+          output_summary="$formatted_output"
+          output_text="$formatted_output"
           output_title="bench result"
 
           postdata="$(jq -n \
