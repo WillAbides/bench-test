@@ -37,6 +37,9 @@ outputs:
   base_sha:
     description: git revision benchstat used as base
     value: ${{ steps.run-benchdiff.outputs.base_sha }}
+  degraded_result:
+    description: whether any part of the results is degraded
+    value: ${{ steps.run-benchdiff.outputs.degraded_result }}
 runs:
   using: composite
   steps:
@@ -86,3 +89,4 @@ runs:
         set_output head_sha "$(jq -r '.head_sha' <<< "$output")"
         set_output base_sha "$(jq -r '.base_sha' <<< "$output")"
         set_output bench_command "$(jq -r '.bench_command' <<< "$output")"
+        set_output degraded_result "$(jq -r '.degraded_result' <<< "$output")"
