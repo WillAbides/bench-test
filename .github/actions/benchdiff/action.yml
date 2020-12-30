@@ -58,7 +58,7 @@ runs:
     - id: run-benchdiff
       shell: bash
       run: |
-        set -e
+        set -x
         if [ "${{ inputs.install_only }}" != "false" ]; then
           exit 0
         fi
@@ -70,7 +70,7 @@ runs:
         fi
         cmd="${{ steps.install.outputs.benchdiff_bin }}"
         output="$(xargs "$cmd" <<< "$benchdiff_args")"
-        benchstat_out="$(echo "$output" |jq -r .benchstat_output)"
+        benchstat_out="$(echo "$output" |jq -r '.benchstat_output')"
         benchstat_out="${benchstat_out//'%'/'%25'}"
         benchstat_out="${benchstat_out//$'\n'/'%0A'}"
         benchstat_out="${benchstat_out//$'\r'/'%0D'}"
