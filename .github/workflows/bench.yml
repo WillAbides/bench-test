@@ -19,7 +19,7 @@ jobs:
       - uses: ./.github/actions/benchdiff
         id: benchdiff
         with:
-          benchdiff_version: 0.3.0
+          benchdiff_version: 0.3.1
           benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3 --html
       - name: output
         run: |
