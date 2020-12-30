@@ -20,7 +20,7 @@ jobs:
         id: benchdiff
         with:
           benchdiff_version: 0.4.0
-          benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3 --markdown
+          benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3 --html
       - name: output
         run: |
           echo benchstat_output:
@@ -36,11 +36,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |
 
-          output_summary="
+          output_summary='${{ steps.benchdiff.outputs.benchstat_output }}'
 
-          ${{ steps.benchdiff.outputs.benchstat_output }}
-
-          "
+          mkdir -p tmp/artifacts
+          echo "$output_summary" > tmp/artifacts/benchdiff.html
 
           conclusion="success"
           head_sha="$(git rev-parse HEAD)"
@@ -51,7 +50,7 @@ jobs:
           --arg conclusion "$conclusion" \
           --arg head_sha "$head_sha" \
           --arg name "$name" \
-          --arg output_summary "$output_summary" \
+          --arg output_summary "\n$output_summary\n" \
           --arg output_title "$output_title" \
           '
             {
@@ -71,3 +70,8 @@ jobs:
           -H 'Content-Type: application/json' \
           -H "Authorization: token $GITHUB_TOKEN" \
           'https://api.github.com/repos/WillAbides/bench-test/check-runs'
+      - name: upload report
+        uses: actions/upload-artifact@v2
+        with:
+          name: benchstat-output
+          path: tmp/artifacts/benchdiff.html
