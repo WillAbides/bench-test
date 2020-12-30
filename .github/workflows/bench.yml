@@ -20,7 +20,7 @@ jobs:
         id: benchdiff
         with:
           benchdiff_version: 0.4.0
-          benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3 --html
+          benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3 --markdown
       - name: output
         run: |
           echo benchstat_output:
@@ -42,9 +42,6 @@ jobs:
 
           "
 
-          mkdir -p tmp/artifacts
-          echo "foo" > tmp/artifacts/benchdiff.html
-
           conclusion="success"
           head_sha="$(git rev-parse HEAD)"
           name="benchdiff result"
@@ -54,7 +51,7 @@ jobs:
           --arg conclusion "$conclusion" \
           --arg head_sha "$head_sha" \
           --arg name "$name" \
-          --arg output_summary "\n$output_summary\n" \
+          --arg output_summary "$output_summary" \
           --arg output_title "$output_title" \
           '
             {
