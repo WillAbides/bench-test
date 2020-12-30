@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |
 
-          output_summary='
+          output_summary="
           foo
 
           \`\`\`
@@ -44,7 +44,7 @@ jobs:
           three four
           \`\`\`
 
-          '
+          "
 
           conclusion="success"
           head_sha="$(git rev-parse HEAD)"
