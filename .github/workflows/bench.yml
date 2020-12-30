@@ -28,7 +28,7 @@ jobs:
           echo bench_command:
           echo '${{ steps.benchdiff.outputs.bench_command }}'
           echo head_sha:
-          echo '${{ steps.benchdiff.outputs.bench_comhead_shamand }}'
+          echo '${{ steps.benchdiff.outputs.head_sha }}'
           echo base_sha:
           echo '${{ steps.benchdiff.outputs.base_sha }}'
       - name: report status
