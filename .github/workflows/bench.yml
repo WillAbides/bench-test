@@ -40,7 +40,8 @@ jobs:
           foo
 
           \`\`\`
-          ${{ steps.benchdiff.outputs.benchstat_output }}
+          one two
+          three four
           \`\`\`
 
           '
