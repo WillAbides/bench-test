@@ -3,7 +3,7 @@ description: use benchdiff
 inputs:
   benchdiff_version:
     description: Version of benchdiff to use (exclude "v" from the front of the release name)
-    default: 0.1.1
+    default: 0.4.1
     required: false
   benchdiff_dir:
     description: Where benchdiff will be installed
@@ -13,40 +13,44 @@ inputs:
     description: Whether to stop after installing. Any value other than "false" is interpreted as true.
     default: "false"
     required: false
+  report_status:
+    description: Whether to report the status. Any value other than "true" is interpreted as false.
+    default: "true"
+    required: false
+  status_name:
+    description: Name to use in reporting status.
+    default: benchdiff
+    required: false
+  github_token:
+    description: Token to use for reporting status.
+    required: true
   benchdiff_args:
     description: |
       Arguments for the benchdiff command.
       All instances of $default_base_ref will be replaced with this repo's default branch.
 
-      Flags:
-        -h, --help                       Show context-sensitive help.
-            --base-ref="HEAD"            The git ref to be used as a baseline.
-            --bench="."                  Run only those benchmarks matching a regular expression.
-            --bench-args="test -bench {{.Bench}} -run '^$' -benchmem -count {{.BenchCount}} {{.Packages}}"
-                                         Use these arguments to run benchmarks. It may be a template.
-            --bench-cmd="go"             The go command to use for benchmarks.
-            --bench-count=10             Run each benchmark n times.
-            --force-base                 Rerun benchmarks on the base reference even if the output already exists.
-            --packages="./..."           Run benchmarks in these packages.
-            --results-dir="./tmp"        The directory where benchmark output will be deposited.
-            --alpha=0.05                 consider change significant if p < α (default 0.05)
-            --csv                        print results in CSV form
-            --delta-test="utest"         significance test to apply to delta: utest, ttest, or none
-            --geomean                    print the geometric mean of each file
-            --html                       print results as an HTML table
-            --norange                    suppress range columns (CSV only)
-            --reverse-sort               reverse sort order
-            --sort="none"                sort by order: delta, name, none
-            --split="pkg,goos,goarch"    split benchmarks by labels
+      See https://github.com/willabides/benchdiff for usage
     default: "--base-ref=$default_base_ref"
     required: false
 outputs:
   benchdiff_bin:
     description: path to the benchdiff executable
     value: ${{ steps.install.outputs.benchdiff_bin }}
-  benchdiff_out:
-    description: stdout from benchdiff
-    value: ${{ steps.run-benchdiff.outputs.output }}
+  benchstat_output:
+    description: output from benchstat
+    value: ${{ steps.run-benchdiff.outputs.benchstat_output }}
+  bench_command:
+    description: command used to run benchmarks
+    value: ${{ steps.run-benchdiff.outputs.bench_command }}
+  head_sha:
+    description: git revision benchstat used as head
+    value: ${{ steps.run-benchdiff.outputs.head_sha }}
+  base_sha:
+    description: git revision benchstat used as base
+    value: ${{ steps.run-benchdiff.outputs.base_sha }}
+  degraded_result:
+    description: whether any part of the results is degraded
+    value: ${{ steps.run-benchdiff.outputs.degraded_result }}
 runs:
   using: composite
   steps:
@@ -60,7 +64,6 @@ runs:
     - id: install
       shell: bash
       run: |
-        set -e
         benchdiff_dir="${{ inputs.benchdiff_dir }}"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
@@ -74,11 +77,17 @@ runs:
     - id: run-benchdiff
       shell: bash
       run: |
-        set -e
         if [ "${{ inputs.install_only }}" != "false" ]; then
           exit 0
         fi
-        benchdiff_args='${{ inputs.benchdiff_args }}'
+        set_output() {
+          value="$2"
+          value="${value//'%'/'%25'}"
+          value="${value//$'\n'/'%0A'}"
+          value="${value//$'\r'/'%0D'}"
+          echo "::set-output name=$1::$value"
+        }
+        benchdiff_args='${{ inputs.benchdiff_args }} --json-output'
         if [[ "$benchdiff_args" == *'$default_base_ref'* ]]; then
           remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d "/" -f 1)"
           default_branch="$(git remote show $remote | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
@@ -86,8 +95,56 @@ runs:
         fi
         cmd="${{ steps.install.outputs.benchdiff_bin }}"
         output="$(xargs "$cmd" <<< "$benchdiff_args")"
-        echo "$output"
-        output="${output//'%'/'%25'}"
-        output="${output//$'\n'/'%0A'}"
-        output="${output//$'\r'/'%0D'}"
-        echo "::set-output name=output::$output"
+
+        set_output benchstat_output "$(jq -r '.benchstat_output' <<< "$output")"
+        set_output head_sha "$(jq -r '.head_sha' <<< "$output")"
+        set_output base_sha "$(jq -r '.base_sha' <<< "$output")"
+        set_output bench_command "$(jq -r '.bench_command' <<< "$output")"
+        set_output degraded_result "$(jq -r '.degraded_result' <<< "$output")"
+    - id: report-status
+      shell: bash
+      run: |
+        if [ "${{ inputs.install_only }}" != "false" ]; then
+          exit 0
+        fi
+        if [ "${{ inputs.report_status }}" != "true" ]; then
+          exit 0
+        fi
+
+        output_summary="
+
+        ${{ steps.run-benchdiff.outputs.benchstat_output }}
+
+        "
+
+        conclusion="success"
+        if [ "${{ steps.run-benchdiff.outputs.degraded_result }}" = "true" ]; then
+          conclusion="failure"
+        fi
+        head_sha="${{ steps.run-benchdiff.outputs.head_sha }}"
+        name="${{ inputs.status_name }}"
+        output_title=""
+        postdata="$(jq -n \
+        --arg conclusion "$conclusion" \
+        --arg head_sha "$head_sha" \
+        --arg name "$name" \
+        --arg output_summary "$output_summary" \
+        --arg output_title "$output_title" \
+        '
+          {
+            "conclusion": $conclusion,
+            "head_sha": $head_sha,
+            "name": $name,
+            "output": {
+              "summary": $output_summary,
+              "title": $output_title
+            }
+          }
+        '
+        )"
+
+        curl -X 'POST' -d "$postdata" \
+        -H 'Accept: application/vnd.github.v3+json' \
+        -H 'Content-Type: application/json' \
+        -H "Authorization: token ${{ inputs.github_token }}" \
+        'https://api.github.com/repos/WillAbides/bench-test/check-runs'
