@@ -23,10 +23,14 @@ jobs:
           benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3
       - name: output
         run: |
-          echo benchdiff_out:
-          echo '${{ steps.benchdiff.outputs.benchdiff_out }}'
-          echo benchstat_out:
-          echo '${{ steps.benchdiff.outputs.benchstat_out }}'
+          echo benchstat_output:
+          echo '${{ steps.benchdiff.outputs.benchstat_output }}'
+          echo bench_command:
+          echo '${{ steps.benchdiff.outputs.bench_command }}'
+          echo head_sha:
+          echo '${{ steps.benchdiff.outputs.bench_comhead_shamand }}'
+          echo base_sha:
+          echo '${{ steps.benchdiff.outputs.base_sha }}'
       - name: report status
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}

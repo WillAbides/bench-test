@@ -25,12 +25,18 @@ outputs:
   benchdiff_bin:
     description: path to the benchdiff executable
     value: ${{ steps.install.outputs.benchdiff_bin }}
-  benchdiff_out:
-    description: stdout from benchdiff
-    value: ${{ steps.run-benchdiff.outputs.output }}
-  benchstat_out:
+  benchstat_output:
     description: output from benchstat
-    value: ${{ steps.run-benchdiff.outputs.benchstat_out }}
+    value: ${{ steps.run-benchdiff.outputs.benchstat_output }}
+  bench_command:
+    description: command used to run benchmarks
+    value: ${{ steps.run-benchdiff.outputs.bench_command }}
+  head_sha:
+    description: git revision benchstat used as head
+    value: ${{ steps.run-benchdiff.outputs.head_sha }}
+  base_sha:
+    description: git revision benchstat used as base
+    value: ${{ steps.run-benchdiff.outputs.base_sha }}
 runs:
   using: composite
   steps:
@@ -57,6 +63,13 @@ runs:
     - id: run-benchdiff
       shell: bash
       run: |
+        set_output() {
+          value="$2"
+          value="${value//'%'/'%25'}"
+          value="${value//$'\n'/'%0A'}"
+          value="${value//$'\r'/'%0D'}"
+          echo "::set-output name=$1::$value"
+        }
         if [ "${{ inputs.install_only }}" != "false" ]; then
           exit 0
         fi
@@ -68,12 +81,8 @@ runs:
         fi
         cmd="${{ steps.install.outputs.benchdiff_bin }}"
         output="$(xargs "$cmd" <<< "$benchdiff_args")"
-        benchstat_out="$(echo "$output" |jq -r '.benchstat_output')"
-        benchstat_out="${benchstat_out//'%'/'%25'}"
-        benchstat_out="${benchstat_out//$'\n'/'%0A'}"
-        benchstat_out="${benchstat_out//$'\r'/'%0D'}"
-        echo "::set-output name=benchstat_out::$benchstat_out"
-        output="${output//'%'/'%25'}"
-        output="${output//$'\n'/'%0A'}"
-        output="${output//$'\r'/'%0D'}"
-        echo "::set-output name=output::$output"
+
+        set_output benchstat_output "$(jq -r '.benchstat_output' <<< "$output")"
+        set_output head_sha "$(jq -r '.head_sha' <<< "$output")"
+        set_output base_sha "$(jq -r '.base_sha' <<< "$output")"
+        set_output bench_command "$(jq -r '.bench_command' <<< "$output")"
