@@ -18,26 +18,7 @@ inputs:
       Arguments for the benchdiff command.
       All instances of $default_base_ref will be replaced with this repo's default branch.
 
-      Flags:
-        -h, --help                       Show context-sensitive help.
-            --base-ref="HEAD"            The git ref to be used as a baseline.
-            --bench="."                  Run only those benchmarks matching a regular expression.
-            --bench-args="test -bench {{.Bench}} -run '^$' -benchmem -count {{.BenchCount}} {{.Packages}}"
-                                         Use these arguments to run benchmarks. It may be a template.
-            --bench-cmd="go"             The go command to use for benchmarks.
-            --bench-count=10             Run each benchmark n times.
-            --force-base                 Rerun benchmarks on the base reference even if the output already exists.
-            --packages="./..."           Run benchmarks in these packages.
-            --results-dir="./tmp"        The directory where benchmark output will be deposited.
-            --alpha=0.05                 consider change significant if p < α (default 0.05)
-            --csv                        print results in CSV form
-            --delta-test="utest"         significance test to apply to delta: utest, ttest, or none
-            --geomean                    print the geometric mean of each file
-            --html                       print results as an HTML table
-            --norange                    suppress range columns (CSV only)
-            --reverse-sort               reverse sort order
-            --sort="none"                sort by order: delta, name, none
-            --split="pkg,goos,goarch"    split benchmarks by labels
+      See https://github.com/willabides/benchdiff for usage
     default: "--base-ref=$default_base_ref"
     required: false
 outputs:
@@ -78,7 +59,7 @@ runs:
         if [ "${{ inputs.install_only }}" != "false" ]; then
           exit 0
         fi
-        benchdiff_args='${{ inputs.benchdiff_args }}'
+        benchdiff_args='${{ inputs.benchdiff_args }} --json-output'
         if [[ "$benchdiff_args" == *'$default_base_ref'* ]]; then
           remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d "/" -f 1)"
           default_branch="$(git remote show $remote | grep "HEAD branch" | cut -d ":" -f 2 | tr -d '[:space:]')"
