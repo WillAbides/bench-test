@@ -71,8 +71,3 @@ jobs:
           -H 'Content-Type: application/json' \
           -H "Authorization: token $GITHUB_TOKEN" \
           'https://api.github.com/repos/WillAbides/bench-test/check-runs'
-      - name: upload report
-        uses: actions/upload-artifact@v2
-        with:
-          name: benchstat-output
-          path: tmp/artifacts/benchdiff.html
