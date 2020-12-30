@@ -37,9 +37,12 @@ jobs:
         run: |
 
           output_summary='
+          foo
+
           \`\`\`
           ${{ steps.benchdiff.outputs.benchstat_output }}
           \`\`\`
+
           '
 
           conclusion="success"
