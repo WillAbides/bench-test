@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-go@v2
         with:
-          go-version: "~1.10"
+          go-version: "~1.15"
       - uses: ./.github/actions/benchdiff
         id: benchdiff
         with:
