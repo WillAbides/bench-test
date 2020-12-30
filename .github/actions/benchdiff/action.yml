@@ -60,7 +60,7 @@ runs:
     - id: install
       shell: bash
       run: |
-        set -e
+        set -x
         benchdiff_dir="${{ inputs.benchdiff_dir }}"
         mkdir -p "$benchdiff_dir"
         cd "$benchdiff_dir"
@@ -74,7 +74,7 @@ runs:
     - id: run-benchdiff
       shell: bash
       run: |
-        set -e
+        set -x
         if [ "${{ inputs.install_only }}" != "false" ]; then
           exit 0
         fi
