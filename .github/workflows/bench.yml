@@ -36,10 +36,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |
 
-          output_summary='${{ steps.benchdiff.outputs.benchstat_output }}'
+          output_summary="
+
+          ${{ steps.benchdiff.outputs.benchstat_output }}
+
+          "
 
           mkdir -p tmp/artifacts
-          echo "$output_summary" > tmp/artifacts/benchdiff.html
+          echo "foo" > tmp/artifacts/benchdiff.html
 
           conclusion="success"
           head_sha="$(git rev-parse HEAD)"
