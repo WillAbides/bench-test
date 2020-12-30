@@ -20,7 +20,7 @@ jobs:
         id: benchdiff
         with:
           benchdiff_version: 0.3.0
-          benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3
+          benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --on-degrade 3 --html
       - name: output
         run: |
           echo benchstat_output:
@@ -37,9 +37,9 @@ jobs:
         run: |
 
           output_summary="
-          \`\`\`
+
           ${{ steps.benchdiff.outputs.benchstat_output }}
-          \`\`\`
+
           "
 
           conclusion="success"
