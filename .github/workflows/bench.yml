@@ -44,7 +44,7 @@ jobs:
 
           conclusion="success"
           head_sha="$(git rev-parse HEAD)"
-          name="benchdiff result"
+          name="bench"
           output_title=""
 
           postdata="$(jq -n \
