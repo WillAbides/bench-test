@@ -121,7 +121,7 @@ runs:
         if [ "${{ steps.run-benchdiff.outputs.degraded_result }}" = "true" ]; then
           conclusion="failure"
         fi
-
+        head_sha="${{ steps.run-benchdiff.outputs.head_sha }}"
         name="${{ inputs.status_name }}"
         output_title=""
         postdata="$(jq -n \
