@@ -21,6 +21,7 @@ jobs:
         with:
           benchdiff_version: 0.4.1
           benchdiff_args: --base-ref=$default_base_ref --bench-count=5 --benchtime 10ms --markdown
+          github_token: ${{ secrets.github_token }}
       - name: output
         run: |
           echo benchstat_output:
@@ -33,43 +34,4 @@ jobs:
           echo '${{ steps.benchdiff.outputs.base_sha }}'
           echo degraded_result:
           echo '${{ steps.benchdiff.outputs.degraded_result }}'
-      - name: report status
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        run: |
 
-          output_summary="
-
-          ${{ steps.benchdiff.outputs.benchstat_output }}
-
-          "
-
-          conclusion="success"
-          head_sha="$(git rev-parse HEAD)"
-          name="benchdiff result"
-          output_title=""
-
-          postdata="$(jq -n \
-          --arg conclusion "$conclusion" \
-          --arg head_sha "$head_sha" \
-          --arg name "$name" \
-          --arg output_summary "$output_summary" \
-          --arg output_title "$output_title" \
-          '
-            {
-              "conclusion": $conclusion,
-              "head_sha": $head_sha,
-              "name": $name,
-              "output": {
-                "summary": $output_summary,
-                "title": $output_title
-              }
-            }
-          '
-          )"
-
-          curl -X 'POST' -d "$postdata" \
-          -H 'Accept: application/vnd.github.v3+json, application/vnd.github.antiope-preview+json' \
-          -H 'Content-Type: application/json' \
-          -H "Authorization: token $GITHUB_TOKEN" \
-          'https://api.github.com/repos/WillAbides/bench-test/check-runs'

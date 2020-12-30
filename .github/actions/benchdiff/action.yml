@@ -3,7 +3,7 @@ description: use benchdiff
 inputs:
   benchdiff_version:
     description: Version of benchdiff to use (exclude "v" from the front of the release name)
-    default: 0.1.1
+    default: 0.4.1
     required: false
   benchdiff_dir:
     description: Where benchdiff will be installed
@@ -13,6 +13,17 @@ inputs:
     description: Whether to stop after installing. Any value other than "false" is interpreted as true.
     default: "false"
     required: false
+  report_status:
+    description: Whether to report the status. Any value other than "true" is interpreted as false.
+    default: "true"
+    required: false
+  status_name:
+    description: Name to use in reporting status.
+    default: benchdiff
+    required: false
+  github_token:
+    description: Token to use for reporting status.
+    required: true
   benchdiff_args:
     description: |
       Arguments for the benchdiff command.
@@ -66,6 +77,9 @@ runs:
     - id: run-benchdiff
       shell: bash
       run: |
+        if [ "${{ inputs.install_only }}" != "false" ]; then
+          exit 0
+        fi
         set_output() {
           value="$2"
           value="${value//'%'/'%25'}"
@@ -73,9 +87,6 @@ runs:
           value="${value//$'\r'/'%0D'}"
           echo "::set-output name=$1::$value"
         }
-        if [ "${{ inputs.install_only }}" != "false" ]; then
-          exit 0
-        fi
         benchdiff_args='${{ inputs.benchdiff_args }} --json-output'
         if [[ "$benchdiff_args" == *'$default_base_ref'* ]]; then
           remote="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d "/" -f 1)"
@@ -90,3 +101,50 @@ runs:
         set_output base_sha "$(jq -r '.base_sha' <<< "$output")"
         set_output bench_command "$(jq -r '.bench_command' <<< "$output")"
         set_output degraded_result "$(jq -r '.degraded_result' <<< "$output")"
+    - id: report-status
+      shell: bash
+      run: |
+        if [ "${{ inputs.install_only }}" != "false" ]; then
+          exit 0
+        fi
+        if [ "${{ inputs.report_status }}" != "true" ]; then
+          exit 0
+        fi
+
+        output_summary="
+
+        ${{ steps.run-benchdiff.outputs.benchstat_output }}
+
+        "
+
+        conclusion="success"
+        if [ "${{ steps.run-benchdiff.outputs.degraded_result }}" = "true" ]; then
+          conclusion="failure"
+        fi
+
+        name="${{ inputs.status_name }}"
+        output_title=""
+        postdata="$(jq -n \
+        --arg conclusion "$conclusion" \
+        --arg head_sha "$head_sha" \
+        --arg name "$name" \
+        --arg output_summary "$output_summary" \
+        --arg output_title "$output_title" \
+        '
+          {
+            "conclusion": $conclusion,
+            "head_sha": $head_sha,
+            "name": $name,
+            "output": {
+              "summary": $output_summary,
+              "title": $output_title
+            }
+          }
+        '
+        )"
+
+        curl -X 'POST' -d "$postdata" \
+        -H 'Accept: application/vnd.github.v3+json' \
+        -H 'Content-Type: application/json' \
+        -H "Authorization: token ${{ inputs.github_token }}" \
+        'https://api.github.com/repos/WillAbides/bench-test/check-runs'
