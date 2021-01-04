@@ -1,27 +1,11 @@
 package testrepo
 
 import (
-	"io/ioutil"
-	"os"
-	"strconv"
 	"testing"
 	"time"
-)
 
-func getSleepTime(filename string) (time.Duration, error) {
-	b, err := ioutil.ReadFile(filename)
-	if os.IsNotExist(err) {
-		return 10 * time.Millisecond, nil
-	}
-	if err != nil {
-		return 0, err
-	}
-	i, err := strconv.Atoi(string(b))
-	if err != nil {
-		return 0, err
-	}
-	return time.Duration(i) * time.Millisecond, nil
-}
+	"github.com/willabides/bench-test/internal"
+)
 
 type sleeper struct {
 	sleepTime time.Duration
@@ -32,12 +16,12 @@ func (s *sleeper) sleep() {
 }
 
 func Benchmark_sleeper_sleep(b *testing.B) {
-	sleepTime, err := getSleepTime("sleeptime.txt")
+	dp, err := internal.NewFileProvider("sleeptime.txt")
 	if err != nil {
 		b.Fatal(err)
 	}
 	sl := &sleeper{
-		sleepTime: sleepTime,
+		sleepTime: dp.Duration(),
 	}
 	b.ReportAllocs()
 
@@ -47,14 +31,13 @@ func Benchmark_sleeper_sleep(b *testing.B) {
 }
 
 func Benchmark_sleeper_sleep_doubled(b *testing.B) {
-	sleepTime, err := getSleepTime("sleeptime.txt")
+	dp, err := internal.NewFileProvider("sleeptime.txt")
 	if err != nil {
 		b.Fatal(err)
 	}
 	sl := &sleeper{
-		sleepTime: sleepTime * 2,
+		sleepTime: dp.Duration() * 2,
 	}
-	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
 		sl.sleep()
