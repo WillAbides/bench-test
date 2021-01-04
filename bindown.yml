@@ -1,0 +1,22 @@
+systems:
+- darwin/amd64
+- linux/amd64
+dependencies:
+  benchdiff:
+    template: benchdiff#benchdiff
+    vars:
+      version: 0.5.3
+templates:
+  benchdiff#benchdiff:
+    url: https://github.com/WillAbides/benchdiff/releases/download/v{{.version}}/benchdiff_{{.version}}_{{.os}}_{{.arch}}.tar.gz
+    required_vars:
+    - version
+    systems:
+    - darwin/amd64
+    - linux/386
+    - linux/amd64
+template_sources:
+  benchdiff: https://raw.githubusercontent.com/WillAbides/benchdiff/main/bindown.yml
+url_checksums:
+  https://github.com/WillAbides/benchdiff/releases/download/v0.5.3/benchdiff_0.5.3_darwin_amd64.tar.gz: 250e7e15db4656788d9005ba625618e310749703668c083fa1ca9398c4ac541d
+  https://github.com/WillAbides/benchdiff/releases/download/v0.5.3/benchdiff_0.5.3_linux_amd64.tar.gz: 689034dad703a7fabf0a7d803d65d630738a9aa0aeccff9a5708f02ca429365d
