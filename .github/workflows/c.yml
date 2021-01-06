@@ -1,0 +1,32 @@
+name: workflow-c
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  create-check:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - run: |
+          postdata="$(
+          jq -n \
+          --arg conclusion "success" \
+          --arg head_sha "$GITHUB_SHA" \
+          --arg name "status-c" \
+          '
+          {
+            "conclusion": $conclusion,
+            "head_sha": $head_sha,
+            "name": $name,
+          }
+          '
+          )"
+          curl --silent -X 'POST' -d "$postdata" \
+          -H 'Accept: application/vnd.github.v3+json' \
+          -H 'Content-Type: application/json' \
+          -H "Authorization: token ${{ github.token }}" \
+          "https://api.github.com/repos/$GITHUB_REPOSITORY/check-runs"
