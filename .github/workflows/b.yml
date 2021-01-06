@@ -12,6 +12,7 @@ jobs:
         shell: bash
     steps:
       - run: |
+          sleep 1
           postdata="$(
           jq -n \
           --arg conclusion "success" \
