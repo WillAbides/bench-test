@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  benchdiff:
+  create-check:
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -28,5 +28,5 @@ jobs:
           curl --silent -X 'POST' -d "$postdata" \
           -H 'Accept: application/vnd.github.v3+json' \
           -H 'Content-Type: application/json' \
-          -H "Authorization: token $GITHUB_TOKEN" \
+          -H "Authorization: token ${{ github.token }}" \
           "https://api.github.com/repos/$GITHUB_REPOSITORY/check-runs"
