@@ -12,6 +12,10 @@ jobs:
         shell: bash
     steps:
       - run: |
+          curl --silent \
+            -H "Authorization: token ${{ github.token }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/app
           postdata="$(
           jq -n \
           --arg conclusion "success" \
