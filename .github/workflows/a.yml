@@ -15,7 +15,7 @@ jobs:
           curl --silent \
             -H "Authorization: token ${{ github.token }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/user/installations
+            https://api.github.com/user
           postdata="$(
           jq -n \
           --arg conclusion "success" \
