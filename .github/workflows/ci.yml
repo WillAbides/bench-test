@@ -1,0 +1,11 @@
+name: ci
+
+on:
+  push:
+
+jobs:
+  donothing:
+    runs-on: ubuntu-20.04
+    steps:
+      - run: |
+          echo i am doing something
