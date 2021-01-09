@@ -20,7 +20,7 @@ jobs:
       - uses: WillAbides/benchdiff-action@v0
         id: benchdiff
         with:
-          benchdiff_version: 0.5.6
+          benchdiff_version: 0.5.7
           status_sha: ${{ github.sha }}
           benchdiff_args: |
             --cpu=1,2 --warmup-count=1 --warmup-time=10ms --count=1 --benchtime 10ms --tolerance=50 --packages='./argon2/...' --debug
