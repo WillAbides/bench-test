@@ -21,7 +21,7 @@ jobs:
         with:
           benchdiff_version: 0.5.6
           benchdiff_args: --base-ref=$default_base_ref --count=5 --benchtime 10ms --benchstat-output markdown
-          github_token: ${{ secrets.github_token }}
+          status_name: bench-result
       - name: output
         run: |
           echo benchstat_output:
