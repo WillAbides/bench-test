@@ -21,6 +21,7 @@ jobs:
         id: benchdiff
         with:
           benchdiff_version: 0.5.6
+          status_name: bench-result
           benchdiff_args: --base-ref=$default_base_ref --count=5 --benchtime 10ms --benchstat-output markdown
       - name: output
         run: |
