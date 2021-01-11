@@ -24,7 +24,7 @@ jobs:
           status_sha: ${{ github.sha }}
           status_name: crypto-bench-result
           benchdiff_args: |
-            --cpu=1,2
+            --cpu=1,2,4
             --count=1
             --benchtime=1ms
             --tolerance=50
