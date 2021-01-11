@@ -29,5 +29,5 @@ jobs:
             --warmup-count=1
             --benchtime=10ms
             --tolerance=50
-            --base-ref origin/release-branch.go1.14
+            --base-ref origin/release-branch.go1.15
             --debug
