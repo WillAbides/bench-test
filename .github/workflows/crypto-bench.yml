@@ -25,7 +25,8 @@ jobs:
           status_name: crypto-bench-result
           benchdiff_args: |
             --cpu=1,2
-            --benchtime=1ms
+            --count=1
+            --benchtime=1x
             --tolerance=50
             --base-ref origin/release-branch.go1.14
             --debug
