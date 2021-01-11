@@ -26,4 +26,3 @@ jobs:
           benchdiff_args: |
             --warmup-count=1 --warmup-time=10ms --count=10
             --benchtime 10ms --tolerance=50 --packages='./...' --debug
-            --base-ref release-branch.go1.14
