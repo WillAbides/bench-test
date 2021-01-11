@@ -26,7 +26,7 @@ jobs:
           benchdiff_args: |
             --cpu=1,2
             --count=1
-            --benchtime=1x
+            --benchtime=1ms
             --tolerance=50
             --base-ref origin/release-branch.go1.14
             --debug
