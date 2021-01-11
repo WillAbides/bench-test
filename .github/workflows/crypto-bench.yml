@@ -1,0 +1,33 @@
+name: crypto-bench
+
+on:
+  push:
+    branches:
+      - cryptobench
+  workflow_dispatch:
+
+jobs:
+  crypto-bench:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: golang/crypto
+          fetch-depth: 0
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "~1.15"
+      - uses: WillAbides/benchdiff-action@v0
+        id: benchdiff
+        with:
+          benchdiff_version: 0.5.8
+          status_sha: ${{ github.sha }}
+          status_name: crypto-bench-result
+          benchdiff_args: |
+            --cpu=1
+            --count=10
+            --warmup-count=1
+            --benchtime=10ms
+            --tolerance=50
+            --base-ref origin/release-branch.go1.15
+            --debug
