@@ -20,7 +20,7 @@ jobs:
       - uses: WillAbides/benchdiff-action@v0
         id: benchdiff
         with:
-          benchdiff_version: 0.5.7
+          benchdiff_version: 0.5.8
           status_sha: ${{ github.sha }}
           status_name: crypto-bench-result
           benchdiff_args: |
