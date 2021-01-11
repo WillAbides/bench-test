@@ -25,7 +25,7 @@ jobs:
           status_name: crypto-bench-result
           benchdiff_args: |
             --cpu=1
-            --count=1
+            --count=10
             --warmup-count=1
             --benchtime=10ms
             --tolerance=50
