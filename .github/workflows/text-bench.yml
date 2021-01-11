@@ -1,0 +1,34 @@
+name: text-bench
+
+on:
+  push:
+    branches:
+      - textbench
+  workflow_dispatch:
+
+jobs:
+  text-bench:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: golang/text
+          fetch-depth: 0
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "~1.15"
+      - uses: WillAbides/benchdiff-action@v0
+        id: benchdiff
+        with:
+          benchdiff_version: 0.5.8
+          status_sha: ${{ github.sha }}
+          status_name: text-bench-result
+          benchdiff_args: |
+            --packages ./unicode/...
+            --cpu=1
+            --count=10
+            --warmup-count=1
+            --benchtime=10ms
+            --tolerance=50
+            --base-ref v0.3.5
+            --debug
