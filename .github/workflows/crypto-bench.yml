@@ -24,6 +24,8 @@ jobs:
           status_sha: ${{ github.sha }}
           status_name: crypto-bench-result
           benchdiff_args: |
-            --warmup-count=1 --warmup-time=10ms --count=1
-            --benchtime 10ms --tolerance=50 --packages='./...' --debug
+            --cpu=1
+            --warmup-count=1
+            --tolerance=50
             --base-ref origin/release-branch.go1.14
+            --debug
