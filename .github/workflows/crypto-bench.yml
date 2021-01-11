@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: "~1.15"
+      - run: |
+          git fetch origin
       - uses: WillAbides/benchdiff-action@v0
         id: benchdiff
         with:
@@ -24,5 +26,6 @@ jobs:
           status_sha: ${{ github.sha }}
           status_name: crypto-bench-result
           benchdiff_args: |
-            --warmup-count=1 --warmup-time=10ms --count=10
+            --warmup-count=1 --warmup-time=10ms --count=1
             --benchtime 10ms --tolerance=50 --packages='./...' --debug
+            --base-ref origin/release-branch.go1.14
