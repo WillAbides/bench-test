@@ -26,11 +26,10 @@ jobs:
           benchdiff_args: |
             --packages ./unicode/...
             --cpu=1
-            --count=10
-            --warmup-count=1
+            --count=1
             --benchtime=10ms
             --tolerance=50
             --base-ref v0.3.5
             --debug
       - name: output
-        run: echo '${{ toJson(steps.benchdiff.outputs) }}
+        run: echo '${{ toJson(steps.benchdiff.outputs) }}'

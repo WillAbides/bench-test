@@ -24,4 +24,4 @@ jobs:
           status_name: bench-result
           benchdiff_args: --base-ref=$default_base_ref --count=5 --benchtime 10ms --benchstat-output markdown
       - name: output
-        run: echo '${{ toJson(steps.benchdiff.outputs) }}
+        run: echo '${{ toJson(steps.benchdiff.outputs) }}'
