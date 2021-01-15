@@ -17,18 +17,19 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: "~1.15"
-      - uses: WillAbides/benchdiff-action@v0
+      - uses: WillAbides/benchdiff-action@prbase
         id: benchdiff
         with:
-          benchdiff_version: 0.5.8
+          benchdiff_version: 0.6.2
           status_sha: ${{ github.sha }}
           status_name: text-bench-result
           benchdiff_args: |
             --packages ./unicode/...
             --cpu=1
-            --count=10
-            --warmup-count=1
+            --count=1
             --benchtime=10ms
             --tolerance=50
-            --base-ref v0.3.5
+            --base-ref v0.3.4
             --debug
+      - name: output
+        run: echo '${{ toJson(steps.benchdiff.outputs) }}'

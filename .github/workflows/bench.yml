@@ -17,21 +17,11 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: "~1.15"
-      - uses: WillAbides/benchdiff-action@v0
+      - uses: WillAbides/benchdiff-action@prbase
         id: benchdiff
         with:
-          benchdiff_version: 0.5.8
+          benchdiff_version: 0.6.2
           status_name: bench-result
           benchdiff_args: --base-ref=$default_base_ref --count=5 --benchtime 10ms --benchstat-output markdown
       - name: output
-        run: |
-          echo benchstat_output:
-          echo '${{ steps.benchdiff.outputs.benchstat_output }}'
-          echo bench_command:
-          echo '${{ steps.benchdiff.outputs.bench_command }}'
-          echo head_sha:
-          echo '${{ steps.benchdiff.outputs.head_sha }}'
-          echo base_sha:
-          echo '${{ steps.benchdiff.outputs.base_sha }}'
-          echo degraded_result:
-          echo '${{ steps.benchdiff.outputs.degraded_result }}'
+        run: echo '${{ toJson(steps.benchdiff.outputs) }}'
