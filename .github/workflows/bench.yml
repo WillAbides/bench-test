@@ -20,7 +20,7 @@ jobs:
       - uses: WillAbides/benchdiff-action@prbase
         id: benchdiff
         with:
-          benchdiff_version: 0.5.8
+          benchdiff_version: 0.6.2
           status_name: bench-result
           benchdiff_args: --base-ref=$default_base_ref --count=5 --benchtime 10ms --benchstat-output markdown
       - name: output
